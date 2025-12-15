@@ -1,0 +1,265 @@
+===============================================================================
+✅ CHECKLIST DE PRUEBAS - SISTEMA DE CATEGORÍAS
+===============================================================================
+
+📋 FLUJO COMPLETO VERIFICADO
+===============================================================================
+
+✅ 1. BACKEND - Modelo de Categoría
+-------------------------------------------------------------------------------
+   ✓ Campo nombre: requerido, único, 2-50 caracteres
+   ✓ Campo descripción: opcional, máximo 200 caracteres
+   ✓ Campo icono: opcional, default '📦'
+   ✓ Campo activo: boolean, default true
+   ✓ Campo createdBy: referencia a User, requerido
+   ✓ Timestamps automáticos (createdAt, updatedAt)
+
+
+✅ 2. BACKEND - Controlador de Categorías
+-------------------------------------------------------------------------------
+   ✓ getCategorias()
+     - Paginación funcional
+     - Búsqueda por nombre/descripción
+     - Filtro por estado activo
+     - Populate de usuario creador
+     - Ordenamiento alfabético por nombre
+   
+   ✓ getCategoria()
+     - Busca por ID
+     - Populate de usuario creador
+     - Manejo de errores 404
+   
+   ✓ createCategoria()
+     - Validación de campos
+     - Verificación de nombre único
+     - Asociación con usuario autenticado
+     - Populate después de crear
+   
+   ✓ updateCategoria()
+     - Validación de campos
+     - Verificación de nombre único (excluyendo actual)
+     - Actualización parcial de campos
+     - Populate después de actualizar
+   
+   ✓ deleteCategoria()
+     - Verificación de existencia
+     - ⭐ VALIDACIÓN: No permite eliminar si hay productos asociados
+     - Mensaje informativo de cuántos productos están asociados
+     - Manejo de errores
+
+
+✅ 3. BACKEND - Modelo de Producto (Actualizado)
+-------------------------------------------------------------------------------
+   ✓ Campo categoria cambió de String a ObjectId
+   ✓ Referencia al modelo 'Categoria'
+   ✓ Campo requerido
+   ✓ Sin enum hardcodeado (eliminado)
+
+
+✅ 4. BACKEND - Controlador de Productos (Actualizado)
+-------------------------------------------------------------------------------
+   ✓ Import de modelo Categoria
+   
+   ✓ getProducts()
+     - Populate de categoria con nombre e icono
+     - Filtro por categoria funciona con ObjectId
+   
+   ✓ getProduct()
+     - Populate de categoria con nombre e icono
+   
+   ✓ createProduct()
+     - ⭐ VALIDACIÓN: Verifica que la categoría existe antes de crear
+     - Mensaje de error si categoría no existe
+     - Populate de categoria después de crear
+   
+   ✓ updateProduct()
+     - ⭐ VALIDACIÓN: Verifica que la categoría existe si se actualiza
+     - Mensaje de error si categoría no existe
+     - Populate de categoria después de actualizar
+
+
+✅ 5. BACKEND - Rutas de Categorías
+-------------------------------------------------------------------------------
+   ✓ GET    /api/categorias       - Listar (con paginación y filtros)
+   ✓ POST   /api/categorias       - Crear (validación de campos)
+   ✓ GET    /api/categorias/:id   - Obtener una
+   ✓ PUT    /api/categorias/:id   - Actualizar (validación de campos)
+   ✓ DELETE /api/categorias/:id   - Eliminar (con validación)
+   ✓ Todas las rutas protegidas con middleware protect
+
+
+✅ 6. FRONTEND - Servicio de Categorías
+-------------------------------------------------------------------------------
+   ✓ getAll(filters)      - Con búsqueda, activo, paginación
+   ✓ getCategorias(page, limit) - Helper para cargar todas activas
+   ✓ getById(id)          - Obtener una categoría
+   ✓ create(data)         - Crear nueva
+   ✓ update(id, data)     - Actualizar existente
+   ✓ delete(id)           - Eliminar
+
+
+✅ 7. FRONTEND - Componente CategoriaForm
+-------------------------------------------------------------------------------
+   ✓ Campo nombre: validación 2-50 caracteres, requerido
+   ✓ Campo descripción: validación máximo 200 caracteres, opcional
+   ✓ Campo icono: opcional, placeholder con emoji
+   ✓ Modo CREATE y EDIT según prop
+   ✓ Reset de formulario al cambiar categoría
+   ✓ Validación con react-hook-form
+
+
+✅ 8. FRONTEND - Página Categorias
+-------------------------------------------------------------------------------
+   ✓ Lista de categorías con iconos
+   ✓ Paginación (12 por página)
+   ✓ Búsqueda con debounce (500ms)
+   ✓ Botón crear categoría
+   ✓ Botón editar categoría
+   ✓ Botón eliminar con confirmación
+   ✓ Alertas de éxito/error
+   ✓ Modal para crear/editar
+   ✓ Manejo de estados de carga
+
+
+✅ 9. FRONTEND - Componente ProductForm (Actualizado)
+-------------------------------------------------------------------------------
+   ✓ Carga categorías dinámicamente al montar
+   ✓ Select muestra icono + nombre de cada categoría
+   ✓ Envía el _id de la categoría (no el nombre)
+   ✓ Maneja categoría como objeto en modo edición
+   ✓ Extrae categoria._id si viene poblada
+   ✓ Estado de carga mientras carga categorías
+   ✓ Mensaje si no hay categorías disponibles
+   ✓ Select deshabilitado mientras carga
+
+
+✅ 10. FRONTEND - Página Products (Actualizado)
+-------------------------------------------------------------------------------
+   ✓ Carga categorías al montar la página
+   ✓ Filtro de categorías dinámico (no hardcodeado)
+   ✓ Select muestra icono + nombre
+   ✓ Filtra por _id de categoría
+   
+   ✓ Tabla de productos:
+     - Muestra categoria.icono + categoria.nombre
+     - Maneja caso de categoría null
+   
+   ✓ Modal de detalle:
+     - Muestra categoria.icono + categoria.nombre
+     - Maneja caso de categoría null
+
+
+===============================================================================
+🔒 VALIDACIONES DE SEGURIDAD IMPLEMENTADAS
+===============================================================================
+
+✅ 1. No se puede crear categoría con nombre duplicado
+✅ 2. No se puede actualizar categoría con nombre de otra existente
+✅ 3. No se puede eliminar categoría si tiene productos asociados
+✅ 4. No se puede crear producto con categoría inexistente
+✅ 5. No se puede actualizar producto con categoría inexistente
+✅ 6. Todas las operaciones requieren autenticación JWT
+
+
+===============================================================================
+🧪 FLUJO DE PRUEBA RECOMENDADO
+===============================================================================
+
+1. Iniciar sesión en la aplicación
+   
+2. Ir a "Categorías"
+   - Crear categoría: "Electrónica" 📱
+   - Crear categoría: "Ropa" 👕
+   - Crear categoría: "Alimentos" 🍎
+   
+3. Ir a "Productos"
+   - Verificar que el select de categorías muestra las 3 categorías creadas
+   - Crear producto "Laptop" → Categoría: Electrónica
+   - Crear producto "Camiseta" → Categoría: Ropa
+   
+4. Volver a "Categorías"
+   - Intentar eliminar "Electrónica"
+   - ✅ Debe mostrar error: "tiene 1 producto asociado"
+   - Editar "Ropa" → Cambiar icono a 👔
+   
+5. Verificar en "Productos"
+   - ✅ Los productos deben mostrar categoría.icono + categoría.nombre
+   - ✅ El filtro debe tener las categorías con iconos
+   - ✅ Filtrar por "Electrónica" debe mostrar solo "Laptop"
+   
+6. Editar producto "Laptop"
+   - Cambiar categoría a "Ropa"
+   - ✅ Debe actualizar correctamente
+   
+7. Eliminar producto "Laptop"
+   
+8. Volver a "Categorías"
+   - Intentar eliminar "Electrónica"
+   - ✅ Ahora SÍ debe permitir eliminar (no tiene productos)
+
+
+===============================================================================
+⚠️ CASOS DE ERROR MANEJADOS
+===============================================================================
+
+✅ Crear categoría sin nombre
+   → Error: "El nombre es requerido"
+
+✅ Crear categoría con nombre existente
+   → Error: "Ya existe una categoría con ese nombre"
+
+✅ Eliminar categoría con productos
+   → Error: "tiene X producto(s) asociado(s)"
+
+✅ Crear producto sin seleccionar categoría
+   → Error: "La categoría es requerida"
+
+✅ Crear producto con categoría inexistente (ID inválido)
+   → Error: "La categoría seleccionada no existe"
+
+✅ Filtrar productos si no hay categorías
+   → Select vacío o muestra solo "Todas las categorías"
+
+✅ Crear producto si no hay categorías creadas
+   → Mensaje: "No hay categorías disponibles. Crea una categoría primero."
+
+
+===============================================================================
+📊 RESUMEN DE CAMBIOS
+===============================================================================
+
+ELIMINADO:
+   ❌ Categorías hardcodeadas en backend (enum en Product.js)
+   ❌ Array CATEGORIAS en ProductForm.jsx
+   ❌ Array CATEGORIAS en Products.jsx
+   ❌ Scripts de seed (seedCategorias.js, seedData.js)
+
+AGREGADO:
+   ✅ Modelo Categoria con validaciones
+   ✅ Controlador completo de categorías (CRUD)
+   ✅ Rutas protegidas de categorías
+   ✅ Validación de productos asociados al eliminar
+   ✅ Validación de categoría existente al crear/editar productos
+   ✅ Populate de categoría en productos
+   ✅ Carga dinámica de categorías en formularios
+   ✅ Filtros dinámicos por categoría
+   ✅ Visualización de iconos en toda la interfaz
+
+ACTUALIZADO:
+   ✅ Product.js: categoria de String a ObjectId
+   ✅ productController.js: validaciones y populate
+   ✅ ProductForm.jsx: carga dinámica de categorías
+   ✅ Products.jsx: filtros y visualización dinámica
+   ✅ productService.js: método getCategorias()
+
+
+===============================================================================
+✅ ESTADO FINAL: TODO FUNCIONANDO
+===============================================================================
+
+El sistema de categorías está completamente funcional y dinámico.
+No hay datos hardcodeados.
+Todas las validaciones implementadas.
+Flujo completo probado y documentado.
+
+===============================================================================
